@@ -3,30 +3,29 @@ import java.util.List;
 public class MasterControl {
 
 	public static void main(String[] args) {
-		MasterControl mastercontrol = new MasterControl();
-		mastercontrol.start();
+		MasterControl masterControl = new MasterControl();
+		masterControl.start();
 	}
 
-	void start() {
+	public void start() {
 		Input input = new Input();
-		List<String> input_data = input.read();
-
+		Output output = new Output();
 		CircularShifter circularShifter = new CircularShifter();
-		List<String> circular_data = circularShifter.shiftLines(input_data);
-
 		Alphabetizer alphabetizer = new Alphabetizer();
-		List<String> alpha_data = alphabetizer.sort(circular_data);
 
-		Message observable = new Message();
+		input.attach(circularShifter);
+		circularShifter.attach(alphabetizer);
+		List<String> inputData = input.read();
 
-		observable.addObserver(input);
-		observable.setMessage(input_data);
+		List<String> circularData = circularShifter.shiftLines(inputData);
 
-		observable.addObserver(circularShifter);
-		observable.setMessage(circular_data);
+		List<String> alphaData = alphabetizer.sort(circularData);
 
-		observable.addObserver(alphabetizer);
-		observable.setMessage(alpha_data);
+		output.write(alphaData);
+
+		input.removeObserver(circularShifter);
+		circularShifter.removeObserver(alphabetizer);
 
 	}
+
 }

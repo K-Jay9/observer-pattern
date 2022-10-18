@@ -1,26 +1,37 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 
-public class Alphabetizer implements Observer {
+public class Alphabetizer extends Subject implements Observer {
 
-	List<String> res = new ArrayList<>();
+	List<String> ts_res;
+	List<String> test = new ArrayList<>();
 
-	public void attach(Object alphabetizerTest) {
+	@Override
+	public void attach(Observer observer) {
+		this.observers.add(observer);
 	}
 
 	public List<String> sort(List<String> lines) {
-
-		res = lines;
-		return lines;
+		TreeSet<String> tree_set = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+		for (String line : lines) {
+			tree_set.add(line);
+		}
+		ts_res = new ArrayList<>(tree_set);
+		return ts_res;
 	}
 
 	@Override
-	public void update(Message mess) throws IllegalStateException {
+	public void update(Message mess) {
 		if (mess.str == null) {
-			throw new IllegalStateException();
+			List<String> result = this.sort(test);
+			for (String ts : result) {
+				this.notifyObserver(new Message(ts));
+				this.observers.remove(this);
+			}
 		}
-		Message message = new Message();
-		message.setMessage(res);
+		test.add(mess.getString());
+
 	}
 
 }

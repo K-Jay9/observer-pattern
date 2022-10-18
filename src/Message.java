@@ -1,13 +1,8 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Observable;
-
-final class Message extends Observable {
+final class Message {
 
 	String str;
 	boolean bool;
-	boolean isFinished = false;
-	private List<Observer> observers = new ArrayList<>();
+	boolean state = false;
 
 	Message() {
 
@@ -15,27 +10,19 @@ final class Message extends Observable {
 
 	Message(String s) {
 		this.str = s;
-		bool = false;
+		this.bool = false;
 	}
 
-	Message(boolean bool) {
-		this.bool = bool;
+	Message(boolean b) {
 		this.str = null;
-	}
-
-	public void addObserver(Observer observer) {
-		this.observers.add(observer);
-	}
-
-	public void setMessage(List<String> str) {
-		for (Observer observer : observers) {
-			observer.update(this);
-		}
+		this.bool = b;
 	}
 
 	String getString() throws IllegalStateException {
+
 		if (this.str == null) {
-			throw new IllegalStateException();
+			throw new IllegalStateException(
+					"Signals that a method has been invoked at an illegal or inappropriate time.");
 		}
 		return this.str;
 	}
